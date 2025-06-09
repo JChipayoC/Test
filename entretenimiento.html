@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entretenimiento para Reducir la Ansiedad</title>
+    <link rel="stylesheet" href="entretenimiento.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <h1>Entretenimiento</h1>
+
+        <!-- Sección de Juego: Adivina el Número -->
+        <div class="game-section">
+            <h2>¡Juega para Desestresarte!</h2>
+            <p>Adivina un número entre 1 y 100:</p>
+            <input type="number" id="userInput" placeholder="Introduce un número" />
+            <button onclick="checkGuess()">Comprobar</button>
+            <p id="gameMessage"></p>
+        </div>
+
+        <!-- Sección de Juego de Memoria -->
+        <div class="memory-game">
+            <h2>Juego de Memoria</h2>
+            <p>Haz clic en las cartas para hacer coincidir los pares.</p>
+            <div class="memory-board" id="memory-board">
+                <!-- Las cartas se generarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- Sección de Videos -->
+        <div class="video-section">
+            <h2>Videos para Relajarte</h2>
+            <p>Mira estos videos para relajarte y reducir el estrés:</p>
+            <select id="videoCategory" onchange="changeVideoCategory()">
+                <option value="relajacion">Relajación</option>
+                <option value="meditacion">Meditación</option>
+                <option value="musica">Música relajante</option>
+            </select>
+            <div class="videos">
+                <!-- Los videos cambiarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- Sección de Música Relajante -->
+        <div class="music-section">
+            <h2>Música para Relajarte</h2>
+            <audio controls>
+                <source src="https://www.bensound.com/bensound-music/bensound-relaxing.mp3" type="audio/mpeg">
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+        </div>
+
+        <!-- Sección de Consejos de Bienestar -->
+        <div class="wellness-section">
+            <h2>Consejos de Bienestar</h2>
+            <button onclick="showWellnessTip()">Mostrar Consejos</button>
+            <p id="wellness-tip"></p>
+        </div>
+    </div>
+
+    <script>
+        // Juego Adivina el Número
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        function checkGuess() {
+            const userGuess = document.getElementById("userInput").value;
+            const messageElement = document.getElementById("gameMessage");
+
+            if (userGuess === "") {
+                messageElement.textContent = "Por favor, ingresa un número.";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            attempts++;
+            if (userGuess < randomNumber) {
+                messageElement.textContent = "Demasiado bajo. Intenta de nuevo.";
+                messageElement.style.color = "orange";
+            } else if (userGuess > randomNumber) {
+                messageElement.textContent = "Demasiado alto. Intenta de nuevo.";
+                messageElement.style.color = "orange";
+            } else {
+                messageElement.textContent = `¡Felicidades! Adivinaste el número en ${attempts} intentos.`;
+                messageElement.style.color = "green";
+                randomNumber = Math.floor(Math.random() * 100) + 1;
+                attempts = 0;
+            }
+        }
+
+        // Juego de Memoria
+        const cards = [
+            '🍎', '🍎', '🍌', '🍌', '🍍', '🍍', '🍒', '🍒', '🍓', '🍓'
+        ];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createMemoryBoard() {
+            const shuffledCards = shuffleArray(cards);
+            const board = document.getElementById('memory-board');
+            board.innerHTML = '';  // Limpiar tablero antes de crear nuevas cartas
+            shuffledCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('memory-card');
+                cardElement.setAttribute('data-card', card);
+                cardElement.setAttribute('data-id', index);
+                cardElement.onclick = flipCard;
+                board.appendChild(cardElement);
+            });
+        }
+
+        function flipCard() {
+            const card = this;
+            card.textContent = card.getAttribute('data-card');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.getAttribute('data-card') === card2.getAttribute('data-card')) {
+                matchedPairs++;
+                if (matchedPairs === cards.length / 2) {
+                    // Mostrar mensaje de victoria
+                    setTimeout(() => {
+                        alert('¡Ganaste! Has encontrado todos los pares.');
+                        resetGame();
+                    }, 500);
+                }
+            } else {
+                card1.textContent = '';
+                card2.textContent = '';
+            }
+            flippedCards = [];
+        }
+
+        // Reiniciar el juego después de que el jugador haya ganado
+        function resetGame() {
+            matchedPairs = 0;  // Resetear los pares coincidentes
+            createMemoryBoard();  // Crear un nuevo tablero
+        }
+
+        // Iniciar el juego por primera vez
+        createMemoryBoard();
+
+
+        // Videos
+        const videoCategories = {
+            relajacion: [
+                'https://www.youtube.com/embed/YhVxgXfwbmE', // Video de relajación
+                'https://www.youtube.com/embed/oqvU5p31vs8' // Otro video de relajación
+            ],
+            meditacion: [
+                'https://www.youtube.com/embed/ZZ5LpwO-An4', // Video de meditación
+                'https://www.youtube.com/embed/J4nKjcNBw5g'  // Otro video de meditación
+            ],
+            musica: [
+                'https://www.youtube.com/embed/ZQWstLR2fNs', // Música relajante
+                'https://www.youtube.com/embed/Zs_fHi9FVkw'  // Otra música relajante
+            ]
+        };
+
+        function changeVideoCategory() {
+            const category = document.getElementById('videoCategory').value;
+            const videoSection = document.querySelector('.videos');
+            videoSection.innerHTML = '';
+            videoCategories[category].forEach(url => {
+                const iframe = document.createElement('iframe');
+                iframe.width = '560';
+                iframe.height = '315';
+                iframe.src = url;
+                iframe.frameborder = '0';
+                iframe.allowfullscreen = true;
+                videoSection.appendChild(iframe);
+            });
+        }
+
+        // Consejos de Bienestar
+        const wellnessTips = [
+            'Busca ayuda profesional si lo necesitas: No dudes en pedir apoyo a psicólogos, trabajadores sociales o médicos. La ansiedad se puede tratar y mejorar con ayuda adecuada.',
+            'Practica la respiración profunda: Cuando te sientas ansiosa, haz respiraciones lentas y profundas. Inhala contando hasta 4, mantén el aire contando hasta 4 y exhala contando hasta 6. Repite varias veces para calmar tu cuerpo.',
+            'Establece una rutina diaria: Intenta tener horarios regulares para dormir, comer, estudiar o trabajar y descansar. Esto ayuda a tu mente a sentirse más segura y organizada.',
+            'Haz ejercicio físico: Actividades como caminar, bailar o estiramientos suaves liberan tensiones y mejoran tu estado de ánimo.',
+            'Dedica tiempo a actividades que disfrutes: Leer, escuchar música, dibujar o cualquier pasatiempo que te guste puede distraer tu mente de las preocupaciones.',
+            'Habla con alguien de confianza: Compartir tus sentimientos con familiares, amigos o personal del refugio te puede ayudar a sentirte apoyada y comprendida.',
+            'Evita el consumo excesivo de cafeína, alcohol y otras sustancias: Estas pueden aumentar la ansiedad y afectar tu descanso.',
+            'Aprende a identificar y aceptar tus emociones: Reconoce cuando te sientes ansiosa sin juzgarte. Aceptar tus sentimientos es el primer paso para manejarlos.',
+            'Practica técnicas de relajación: Puedes probar la relajación muscular progresiva, meditación o mindfulness para calmar tu mente y cuerpo.',
+            'Cuida tu sueño: Dormir bien es fundamental para tu salud mental. Evita usar pantallas justo antes de dormir y crea un ambiente tranquilo para descansar.'
+        ];
+
+        function showWellnessTip() {
+            const randomTip = wellnessTips[Math.floor(Math.random() * wellnessTips.length)];
+            document.getElementById('wellness-tip').textContent = randomTip;
+        }
+
+        createMemoryBoard();
+    </script>
+</body>
+
+</html>
