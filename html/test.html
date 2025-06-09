@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Autoayuda</title>
+    <link rel="stylesheet" href="test.css">
+    <script>
+        let currentQuestionIndex = 0;
+        let answers = [];
+
+        // Función para obtener el nombre de la URL
+        function obtenerNombre() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nombre = urlParams.get('nombre');
+            if (nombre) {
+                document.getElementById("nombreUsuario").innerText = "Hola, " + nombre + ". ¡Vamos a comenzar el test!";
+            }
+            sessionStorage.setItem('nombreUsuario', nombre);
+
+        }
+
+
+
+        window.onload = obtenerNombre;
+
+        // Función para cargar preguntas desde el archivo JSON
+        async function cargarPreguntas() {
+            const res = await fetch('quest.json');
+            return await res.json();
+        }
+
+        function showQuestion(questionText) {
+            document.getElementById('question-text').innerText = questionText;
+        }
+
+        function saveAnswer() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                alert('Por favor selecciona una respuesta para continuar.');
+                return false;
+            }
+            answers[currentQuestionIndex] = parseInt(selected.value);
+            return true;
+        }
+
+        async function nextQuestion() {
+            if (!saveAnswer()) return;
+
+            // Desmarcar los radio buttons
+            document.querySelectorAll('input[name="answer"]').forEach(radio => radio.checked = false);
+
+            currentQuestionIndex++;
+            const questions = await cargarPreguntas();
+
+            if (currentQuestionIndex >= questions.length) {
+                // Calcular suma total
+                const totalScore = answers.reduce((a, b) => a + b, 0);
+                // Guardar en sessionStorage para JSP
+                sessionStorage.setItem('testResult', totalScore);
+                // Redirigir a página de resultado
+                window.location.href = 'resultados.html';
+            } else {
+                showQuestion(questions[currentQuestionIndex].pregunta);
+            }
+        }
+
+        async function init() {
+            const questions = await cargarPreguntas();
+            showQuestion(questions[currentQuestionIndex].pregunta);
+        }
+
+        init();
+
+
+    </script>
+</head>
+
+<body>
+    <div class="main-container">
+        <h1 id="nombreUsuario"></h1>
+        <div id="question-container">
+            <div class="question-box">
+                <p id="question-text"></p>
+            </div>
+            <form id="quiz-form">
+                <div class="scale-container">
+                    <label>
+                        <input type="radio" name="answer" value="1"> Nunca
+                    </label>
+                    <label>
+                        <input type="radio" name="answer" value="2"> Casi nunca
+                    </label>
+                    <label>
+                        <input type="radio" name="answer" value="3"> A veces
+                    </label>
+                    <label>
+                        <input type="radio" name="answer" value="4"> Casi siempre
+                    </label>
+                    <label>
+                        <input type="radio" name="answer" value="5"> Siempre
+                    </label>
+                </div>
+                <button type="button" onclick="nextQuestion()">Siguiente</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
