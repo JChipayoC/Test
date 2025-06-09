@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Autoayuda</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="style.css">
     <script>
         // Función para abrir la ventana emergente personalizada
         function iniciarTest() {
@@ -18,7 +18,7 @@
             let nombre = document.getElementById("nombreInput").value;
             if (nombre) {
                 // Redirige al test pasando el nombre como parámetro en la URL
-                window.location.href = "../html/test.html?nombre=" + encodeURIComponent(nombre);
+                window.location.href = "test.html?nombre=" + encodeURIComponent(nombre);
             } else {
                 alert("Por favor, ingresa tu nombre para comenzar.");
             }
@@ -41,7 +41,7 @@
     </header>
 
     <main>
-        <img src="../img/img01.png" alt="Ilustración emocional" class="main-image" width="700" height="350">
+        <img src=img01.png" alt="Ilustración emocional" class="main-image" width="700" height="350">
 
         <p class="descripcion">
             Este módulo te ayudará a entender y manejar tus emociones como la ansiedad, tristeza o miedo. <br>
